@@ -1,0 +1,90 @@
+﻿@page
+@model TaxiBooking.Web.Pages.Cars.IndexModel
+@{
+    ViewData["Title"] = "List Cars";
+    Layout = "~/Pages/Shared/_Layout.cshtml";
+
+}
+@if (Model == null || Model.PaginatedCars == null)
+{
+
+}
+else
+{
+
+}
+<div class="container mt-5">
+    <h2>List of Cars</h2>
+    <a asp-page="./Add">Add Car</a>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Car No</th>
+                <th>Car Color</th>
+                <th>Car Model</th>
+                <th>Registration Expiry Date</th>
+                <th>Year of Manufacture</th>
+                <th>Owner Name</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var car in Model?.PaginatedCars?.Cars ?? new List<CarViewModel>())
+            {
+                <tr>
+                    <td>@car.CarNumber</td>
+                    <td>@car.CarColor</td>
+                    <td>@car.CarModel</td>
+                    <td>@car.RegistrationExpiryDate</td>
+                    <td>@car.YearOfManufacture</td>
+                    <td>@car.OwnerName</td>
+                    <td>
+                        <a asp-page="./Edit" asp-route-carNo="@car.Id">Edit</a> |
+                        <a asp-page="./Details" asp-route-carNo="@car.Id">Details</a>
+                        <button class="btn btn-danger" onclick="confirmDelete('@car.Id')">Delete</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <div class="text-center">
+        <nav aria-label="Page navigation example">
+            <ul class="pagination">
+                <li class="page-item @(Model.PaginatedCars.CurrentPage == 1 ? "disabled" : "")">
+                    <a class="page-link" asp-page="./Index" asp-route-page="1">First</a>
+                </li>
+                @for (int i = 1; i <= Model.PaginatedCars.TotalPages; i++)
+                {
+                    <li class="page-item @(Model.PaginatedCars.CurrentPage == i ? "active" : "")">
+                        <a class="page-link" asp-page="./Index" asp-route-page="@i">@i</a>
+                    </li>
+                }
+                <li class="page-item @(Model.PaginatedCars.CurrentPage == Model.PaginatedCars.TotalPages ? "disabled" : "")">
+                    <a class="page-link" asp-page="./Index" asp-route-page="@Model.PaginatedCars.TotalPages">Last</a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+</div>
+
+
+@section Scripts {
+    <script>
+        function confirmDelete(carId) {
+            var confirmation = confirm('Are you sure you want to delete car ?');
+            if (confirmation) {
+                $.ajax({
+                    type: 'POST',
+                    url: '/Cars/Index?handler=Delete',
+                    data: { id: carId },
+                    success: function (data) {
+                        location.reload();
+                    },
+                    error: function (error) {
+                        console.error(error);
+                    }
+                });
+            }
+        }
+    </script>
+}
