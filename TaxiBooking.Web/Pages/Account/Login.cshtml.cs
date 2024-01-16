@@ -93,7 +93,7 @@ namespace TaxiBooking.Web.Pages.Account
                 if (response.IsSuccessStatusCode)
                 {
                     var tokenResponse = await response.Content.ReadAsStringAsync();
-                    var token = JsonSerializer.Deserialize<TokenResponse>(tokenResponse)?.token;
+                    var token = JsonSerializer.Deserialize<TokenResponse>(tokenResponse, new JsonSerializerOptions { PropertyNameCaseInsensitive = true })?.Token;
                     return token;
                 }
 
@@ -109,39 +109,7 @@ namespace TaxiBooking.Web.Pages.Account
 
         private class TokenResponse
         {
-            public string token { get; set; }
-        }
-
-        public async Task<IActionResult> SomeActionRequiringAuthentication()
-        {
-            // Retrieve the token from the cookie
-            var token = _httpContextAccessor.HttpContext.Request.Cookies["AuthToken"];
-
-            // Ensure the token is not null or empty
-            if (string.IsNullOrEmpty(token))
-            {
-                // Redirect to the login page or handle unauthorized access
-                return RedirectToPage("/Account/Login");
-            }
-
-            // Set the token in the request header
-            _httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
-
-            // Make a request to the API using the HttpClient with the added token
-            var apiResponse = await _httpClient.GetAsync("your_api_url/some-action");
-
-            if (apiResponse.IsSuccessStatusCode)
-            {
-                // Handle successful API response
-                var responseData = await apiResponse.Content.ReadAsStringAsync();
-                // Process the response data as needed
-                return Content(responseData);
-            }
-            else
-            {
-                // Handle API error response
-                return Content($"API Error: {apiResponse.StatusCode}");
-            }
+            public string Token { get; set; }
         }
 
     }

@@ -51,9 +51,9 @@ namespace TaxiBooking.Web.Pages.Cars
                 return Content($"API Error: {response.StatusCode}");
             }
         }
-        public async Task<IActionResult> OnPostDeleteAsync(string carNo)
+        public async Task<IActionResult> OnDeleteAsync(long id)
         {
-            var apiUrl = $"{_configuration["ApiBaseUrl"]}/api/cars/{carNo}"; // Replace with your actual API endpoint
+            var apiUrl = $"/api/cars/{id}"; // Replace with your actual API endpoint
             var token = HttpContext.Request.Cookies["AuthToken"]; // Retrieve the token from the cookie
 
             if (string.IsNullOrEmpty(token))
